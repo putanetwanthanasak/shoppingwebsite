@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Item | The Vintage Collective</title>
+    <meta name="description" content="Sell your vintage items on The Vintage Collective.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">The Vintage Collective.</a>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html#shop" class="nav-link">Shop</a></li>
+                    <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+                    <li><a href="index.html#about" class="nav-link">Our Story</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html" class="icon-btn" aria-label="Account">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </a>
+                <button class="icon-btn" aria-label="Cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Add Product Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <h1 class="auth-title">Sell Your Item</h1>
+            <p class="auth-subtitle">Share your vintage treasure with the world.</p>
+            
+            <form class="auth-form" id="addProductForm">
+                <div class="form-group">
+                    <label for="productName" class="form-label">Product Name</label>
+                    <input type="text" id="productName" name="productName" class="form-input" placeholder="e.g. 1960s Teak Coffee Table" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription" class="form-label">Description</label>
+                    <textarea id="productDescription" name="productDescription" class="form-input resize-vertical" rows="4" placeholder="Describe the condition, history, and details..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productPrice" class="form-label">Price ($)</label>
+                    <input type="number" id="productPrice" name="productPrice" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productImage" class="form-label">Product Image</label>
+                    <input type="file" id="productImage" name="productImage" class="form-input" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-btn">List Item</button>
+                
+                <div class="auth-links">
+                    <a href="index.html" class="auth-link">&larr; Back to Shop</a>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="footer-logo">The Vintage Collective.</a>
+                    <p>Preserving the past for the future.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 The Vintage Collective. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- External JS -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Vintage Collective | Timeless Treasures</title>
+    <meta name="description" content="Discover curated vintage clothing, furniture, and decor at The Vintage Collective.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">The Vintage Collective.</a>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="#shop" class="nav-link">Shop</a></li>
+                    <li><a href="#categories" class="nav-link">Categories</a></li>
+                    <li><a href="#about" class="nav-link">Our Story</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <a href="addProduct.html" class="btn btn-secondary btn-sm btn-header-action">
+                    Sell Your Item
+                </a>
+
+                <a href="cart.html" class="icon-btn" aria-label="Cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </a>
+
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <span class="hero-subtitle">Est. 2024 · Vintage Marketplace</span>
+                <h1 class="hero-title">Curated Nostalgia for the Modern Home</h1>
+                <p class="hero-text">
+                    Discover a handpicked selection of timeless furniture, clothing, and artifacts from sellers who love vintage as much as you do.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#shop" class="btn btn-primary">Explore Collection</a>
+                    <a href="addProduct.html" class="btn btn-ghost">
+                        Start Selling
+                    </a>
+                </div>
+
+                <div class="hero-highlights">
+                    <div class="highlight-item">
+                        <span class="highlight-label">+200</span>
+                        <span class="highlight-text">Unique Pieces</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-label">Campus &amp; Vintage</span>
+                        <span class="highlight-text">Curated by real sellers</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-label">Secure</span>
+                        <span class="highlight-text">Account-based buying & selling</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-image-container">
+                <img src="assets/hero.png" alt="Vintage items collection" class="hero-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured / Dynamic Products -->
+    <section id="shop" class="section featured">
+        <div class="container">
+            <div class="section-header section-header-center">
+                <h2 class="section-title">New Arrivals</h2>
+                <p class="section-subtitle">
+                    Fresh finds just added by our community of sellers.
+                </p>
+            </div>
+
+            <!-- ถ้าจะให้ JS ดึงสินค้าจาก backend มาแสดง ให้ใช้ div นี้ -->
+            <div id="product-list" class="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+
+            <div class="section-footer">
+                <a href="#" class="btn btn-outline">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / Our Story -->
+    <section id="about" class="section about">
+        <div class="container about-inner">
+            <div class="about-text">
+                <h2 class="section-title">Our Story</h2>
+                <p>
+                    The Vintage Collective is a shared space for vintage lovers, collectors, and casual thrifters.
+                    Every piece is listed by real people who want their treasures to find a new home.
+                </p>
+                <p>
+                    Whether you're selling items from your campus dorm, your family home, or your personal collection,
+                    our platform makes it easy to list, discover, and purchase unique pieces with a story.
+                </p>
+                <a href="addProduct.html" class="btn btn-primary btn-sm">
+                    Start Listing Your First Item
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="footer-logo">The Vintage Collective.</a>
+                    <p>Preserving the past for the future.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 The Vintage Collective. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- External JS -->
+    <script src="script.js"></script>
+</body>
+</html>

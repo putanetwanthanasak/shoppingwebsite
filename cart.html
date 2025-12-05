@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Vintage Market</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">The Vintage Collective.</a>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html#shop" class="nav-link">Shop</a></li>
+                    <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+                    <li><a href="index.html#about" class="nav-link">Our Story</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="addProduct.html" class="btn btn-primary btn-small">Sell Item</a>
+                <a href="login.html" class="icon-btn" aria-label="Account">
+                    <i class="fas fa-user"></i>
+                </a>
+                <a href="cart.html" class="icon-btn icon-active" aria-label="Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <h1 class="section-title">Your Shopping Cart</h1>
+            
+            <div class="cart-container">
+                <div class="cart-items" id="cart-items">
+                    <!-- Cart items will be loaded here dynamically -->
+                    <div class="loading-spinner">Loading cart...</div>
+                </div>
+
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                    <button class="checkout-btn" id="checkout-btn">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="footer-logo">The Vintage Collective.</a>
+                    <p>Preserving the past for the future.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="index.html#new-arrivals">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 The Vintage Collective. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
