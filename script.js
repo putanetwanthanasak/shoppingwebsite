@@ -355,12 +355,7 @@ async function addToCart(productId, btn) {
 const cartItemsContainer = document.getElementById('cart-items');
 if (cartItemsContainer) {
     loadCart();
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-            alert('Checkout feature coming soon!');
-        });
-    }
+    // Checkout button is now a direct link in HTML
 }
 
 async function loadCart() {
@@ -438,5 +433,99 @@ async function removeFromCart(cartId) {
     } catch (error) {
         console.error('Error removing item:', error);
         showToast('Error removing item');
+    }
+}
+
+// ===== Checkout Page Logic (checkout.html) =====
+const checkoutItemsContainer = document.getElementById('checkout-items');
+if (checkoutItemsContainer) {
+    loadCheckoutItems();
+
+    document.getElementById('purchase-btn').addEventListener('click', handlePurchase);
+}
+
+async function loadCheckoutItems() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/cart/${user.id}`);
+        const items = await response.json();
+
+        if (items.length === 0) {
+            window.location.href = 'cart.html'; // Go back to cart if empty
+            return;
+        }
+
+        renderCheckoutItems(items);
+    } catch (error) {
+        console.error('Error loading checkout:', error);
+        checkoutItemsContainer.innerHTML = '<p>Error loading order details.</p>';
+    }
+}
+
+function renderCheckoutItems(items) {
+    checkoutItemsContainer.innerHTML = '';
+    let total = 0;
+
+    items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const el = document.createElement('div');
+        el.className = 'order-item';
+        el.innerHTML = `
+            <div>
+                <div style="font-weight: 600;">${item.name}</div>
+                <div style="font-size: 0.9rem; color: #888;">Qty: ${item.quantity}</div>
+            </div>
+            <div style="font-weight: 600;">$${itemTotal.toFixed(2)}</div>
+        `;
+        checkoutItemsContainer.appendChild(el);
+    });
+
+    document.getElementById('checkout-subtotal').innerText = `$${total.toFixed(2)}`;
+    document.getElementById('checkout-total').innerText = `$${total.toFixed(2)}`;
+}
+
+async function handlePurchase() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+
+    const btn = document.getElementById('purchase-btn');
+    const originalText = btn.innerText;
+    btn.innerText = 'Processing...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: user.id,
+                buyerName: user.username // pass username if available
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Show modal
+            document.getElementById('modal-order-id').innerText = data.orderId;
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
+        } else {
+            showToast(data.message || 'Purchase failed');
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error purchasing:', error);
+        showToast('Error processing purchase');
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
 }
