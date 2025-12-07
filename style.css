@@ -11,7 +11,7 @@
     --color-text-light: #6B5E51;
     --color-primary: #4A7C59;
     /* Muted Teal */
-    --color-secondary: #C05746;
+    --color-secondary: #f1d5d0;
     /* Burnt Orange */
     --color-accent: #D4A017;
     /* Mustard */
@@ -749,23 +749,27 @@ p {
 .checkout-btn {
     display: block;
     width: 100%;
-    background-color: var(--color-white);
-    color: var(--color-black);
-    /* Reverting to white for better contrast with primary color, or respecting user choice if they really wanted black on dark. But standard is white on primary. The user complaint was "doesn't show background color". If text was black and background transparent/white, it would look like just text. */
-    border: 1rem solid var(--color-black);
-    padding: 1rem;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 1.2rem;
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-top: 1.5rem;
     cursor: pointer;
-    transition: background 0.3s ease;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .checkout-btn:hover {
-    background: var(--color-primary);
-    color: var(--color-white);
+    background-color: #3a6346;
+    /* Darker green */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .empty-cart {
