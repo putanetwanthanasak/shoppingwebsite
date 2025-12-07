@@ -302,8 +302,9 @@ p {
 
 .section-header {
     display: flex;
-    /* Slightly darker cream */
-    text-align: center;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--spacing-md);
 }
 
 .newsletter-content {
@@ -751,7 +752,7 @@ p {
     background-color: var(--color-white);
     color: var(--color-black);
     /* Reverting to white for better contrast with primary color, or respecting user choice if they really wanted black on dark. But standard is white on primary. The user complaint was "doesn't show background color". If text was black and background transparent/white, it would look like just text. */
-    border: 1rem solid var(--color-black) ;
+    border: 1rem solid var(--color-black);
     padding: 1rem;
     border-radius: 8px;
     font-weight: 600;
