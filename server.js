@@ -115,65 +115,80 @@ const initializeTables = () => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `;
+
     db.query(createUsersTableSql, (err) => {
-        if (err) console.error('Error creating users table:', err);
-        else console.log('Users table ready');
-    });
+        if (err) {
+            console.error('Error creating users table:', err);
+            return;
+        }
+        console.log('Users table ready');
 
-    // Create products table
-    const createProductsTableSql = `
-        CREATE TABLE IF NOT EXISTS products (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            name VARCHAR(255) NOT NULL,
-            description TEXT NOT NULL,
-            price DECIMAL(10, 2) NOT NULL,
-            image_data LONGBLOB,
-            image_type VARCHAR(50),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    `;
-    db.query(createProductsTableSql, (err) => {
-        if (err) console.error('Error creating products table:', err);
-        else console.log('Products table ready');
-    });
+        // Create products table (depends on users)
+        const createProductsTableSql = `
+            CREATE TABLE IF NOT EXISTS products (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                price DECIMAL(10, 2) NOT NULL,
+                image_data LONGBLOB,
+                image_type VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                quantity INT DEFAULT 1,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        `;
 
-    // Create cart table
-    const createCartTableSql = `
-        CREATE TABLE IF NOT EXISTS cart (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            product_id INT NOT NULL,
-            quantity INT DEFAULT 1,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (product_id) REFERENCES products(id)
-        )
-    `;
-    db.query(createCartTableSql, (err) => {
-        if (err) console.error('Error creating cart table:', err);
-    });
+        db.query(createProductsTableSql, (err) => {
+            if (err) {
+                console.error('Error creating products table:', err);
+                return;
+            }
+            console.log('Products table ready');
 
-    // Create orderDetail table
-    const createOrderDetailTableSql = `
-        CREATE TABLE IF NOT EXISTS orderDetail (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            order_id VARCHAR(255) NOT NULL,
-            buyer_id INT NOT NULL,
-            buyer_name VARCHAR(255),
-            seller_id INT NOT NULL,
-            seller_name VARCHAR(255),
-            product_id INT NOT NULL,
-            product_name VARCHAR(255),
-            price DECIMAL(10, 2) NOT NULL,
-            quantity INT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    `;
-    db.query(createOrderDetailTableSql, (err) => {
-        if (err) console.error('Error creating orderDetail table:', err);
-        else console.log('OrderDetail table ready');
+            // Create cart table (depends on users and products)
+            const createCartTableSql = `
+                CREATE TABLE IF NOT EXISTS cart (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NOT NULL,
+                    product_id INT NOT NULL,
+                    quantity INT DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (product_id) REFERENCES products(id)
+                )
+            `;
+
+            db.query(createCartTableSql, (err) => {
+                if (err) {
+                    console.error('Error creating cart table:', err);
+                    return;
+                }
+                console.log('Cart table ready');
+
+                // Create orderDetail table
+                const createOrderDetailTableSql = `
+                    CREATE TABLE IF NOT EXISTS orderDetail (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        order_id VARCHAR(255) NOT NULL,
+                        buyer_id INT NOT NULL,
+                        buyer_name VARCHAR(255),
+                        seller_id INT NOT NULL,
+                        seller_name VARCHAR(255),
+                        product_id INT NOT NULL,
+                        product_name VARCHAR(255),
+                        price DECIMAL(10, 2) NOT NULL,
+                        quantity INT NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                `;
+
+                db.query(createOrderDetailTableSql, (err) => {
+                    if (err) console.error('Error creating orderDetail table:', err);
+                    else console.log('OrderDetail table ready');
+                });
+            });
+        });
     });
 };
 
@@ -280,7 +295,7 @@ const uploadMiddleware = (req, res, next) => {
 
 // Add Product
 app.post('/api/add-product', uploadMiddleware, (req, res) => {
-    const { userId, name, description, price } = req.body;
+    const { userId, name, description, price, quantity } = req.body;
     const image = req.file;
 
     if (!userId || !name || !description || !price || !image) {
@@ -288,14 +303,14 @@ app.post('/api/add-product', uploadMiddleware, (req, res) => {
     }
 
     const sql = `
-        INSERT INTO products (user_id, name, description, price, image_data, image_type, image_url)
+        INSERT INTO products (user_id, name, description, price, quantity, image_data, image_type)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const imageUrlPlaceholder = '';
 
     db.query(
         sql,
-        [userId, name, description, price, image.buffer, image.mimetype, imageUrlPlaceholder],
+        [userId, name, description, price, quantity || 1, image.buffer, image.mimetype],
         (err, result) => {
             if (err) {
                 console.error('Error adding product:', err);
@@ -378,7 +393,7 @@ app.get('/api/cart/:userId', (req, res) => {
     const userId = req.params.userId;
 
     const sql = `
-        SELECT c.id as cart_id, c.quantity, p.* 
+        SELECT c.id as cart_id, c.quantity, p.id as product_id, p.name, p.price, p.description, p.image_data, p.image_type, p.user_id as seller_id, p.quantity as stock_quantity
         FROM cart c
         JOIN products p ON c.product_id = p.id
         WHERE c.user_id = ?
@@ -452,7 +467,12 @@ app.post('/api/checkout', (req, res) => {
         // 2. Create Order ID (simple timestamp + random component for uniqueness)
         const orderId = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
-        // 3. Insert into orderDetail
+        // 3. Process each item: Create Order Detail -> Decrement Quantity -> Delete if 0
+        // We use a Promise.all to handle multiple async operations conceptually, or just iterate.
+        // For simplicity and database connection reuse, let's do it sequentially or use a transaction in a real app.
+        // Here we'll just insert the order details first (batch), then loop for updates.
+
+        // Insert into orderDetail
         const insertOrderSql = `
             INSERT INTO orderDetail (order_id, buyer_id, buyer_name, seller_id, seller_name, product_id, product_name, price, quantity)
             VALUES ?
@@ -461,7 +481,7 @@ app.post('/api/checkout', (req, res) => {
         const orderValues = cartItems.map(item => [
             orderId,
             userId,
-            buyerName || 'Unknown', // In a real app we'd fetch this from DB if not provided, or rely on userId join
+            buyerName || 'Unknown',
             item.seller_id,
             item.seller_name,
             item.product_id,
@@ -476,12 +496,46 @@ app.post('/api/checkout', (req, res) => {
                 return res.status(500).json({ message: 'Error creating order' });
             }
 
-            // 4. Clear Cart
+            // 4. Update Product Quantities
+            let completedUpdates = 0;
+            let hasErrors = false;
+
+            cartItems.forEach(item => {
+                // Decrement
+                const updateQtySql = 'UPDATE products SET quantity = quantity - ? WHERE id = ?';
+                db.query(updateQtySql, [item.quantity, item.product_id], (err) => {
+                    if (err) console.error('Error updating quantity:', err);
+
+                    // Check if quantity <= 0 and DELETE
+                    // Note: We check the DB again to be sure, or just rely on the update logic.
+                    // Better to select and check.
+                    const checkQtySql = 'SELECT quantity FROM products WHERE id = ?';
+                    db.query(checkQtySql, [item.product_id], (err, results) => {
+                        if (!err && results.length > 0) {
+                            if (results[0].quantity <= 0) {
+                                // Delete from cart first to avoid FK constraint issues (although we clear this user's cart later, 
+                                // other users might have it). Ideally, we should remove it from ALL carts.
+                                const removeFromAllCartsSql = 'DELETE FROM cart WHERE product_id = ?';
+                                db.query(removeFromAllCartsSql, [item.product_id], (err) => {
+                                    if (!err) {
+                                        const deleteProductSql = 'DELETE FROM products WHERE id = ?';
+                                        db.query(deleteProductSql, [item.product_id], (err) => {
+                                            if (err) console.error('Error deleting out-of-stock product:', err);
+                                            else console.log(`Product ${item.product_id} deleted (out of stock)`);
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+
+            // 5. Clear Cart (for this user)
             const clearCartSql = 'DELETE FROM cart WHERE user_id = ?';
             db.query(clearCartSql, [userId], (err) => {
                 if (err) {
                     console.error('Error clearing cart:', err);
-                    // Note: Order is already created, so this is a partial failure state in a real app (transaction needed)
                     return res.status(500).json({ message: 'Order created but failed to clear cart' });
                 }
 

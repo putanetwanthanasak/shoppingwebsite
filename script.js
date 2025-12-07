@@ -208,6 +208,7 @@ if (addProductForm) {
         const name = document.getElementById('productName').value;
         const description = document.getElementById('productDescription').value;
         const price = document.getElementById('productPrice').value;
+        const quantity = document.getElementById('productQuantity').value;
         const imageFile = document.getElementById('productImage').files[0];
 
         const btn = addProductForm.querySelector('button[type="submit"]');
@@ -220,6 +221,7 @@ if (addProductForm) {
         formData.append('name', name);
         formData.append('description', description);
         formData.append('price', price);
+        formData.append('quantity', quantity);
         formData.append('image', imageFile);
 
         try {
