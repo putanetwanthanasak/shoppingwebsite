@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Vintage Market</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">The Vintage Collective.</a>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html#shop" class="nav-link">Shop</a></li>
+                    <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="cart.html" class="icon-btn" aria-label="Cart">
+                    <i class="fas fa-shopping-cart"></i> Back to Cart
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="section-title">Checkout</h1>
+            <div class="checkout-grid">
+                <!-- Left Column: Order Review -->
+                <div class="order-review">
+                    <h3>Review Your Order</h3>
+                    <div id="checkout-items">
+                        <!-- Items injected via JS -->
+                        <div class="loading-spinner">Loading order details...</div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Summary -->
+                <div class="order-summary-box">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Items Total</span>
+                        <span id="checkout-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <span>$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span id="checkout-total" style="font-size: 1.5rem;">$0.00</span>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                        <h4>Important Information</h4>
+                        <p style="font-size: 0.9rem; color: #666;">
+                            By clicking purchase, you agree to our terms. The seller will be notified immediately.
+                        </p>
+                    </div>
+
+                    <button class="purchase-btn" id="purchase-btn">Complete Purchase</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2>Purchase Complete!</h2>
+            <p>Thank you for your order.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; color: #666;">Your order ID: <span id="modal-order-id" style="font-weight: bold;"></span></p>
+            <button class="btn btn-primary" onclick="window.location.href='index.html'" style="margin-top: 1.5rem;">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 The Vintage Collective. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

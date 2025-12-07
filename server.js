@@ -153,7 +153,27 @@ const initializeTables = () => {
     `;
     db.query(createCartTableSql, (err) => {
         if (err) console.error('Error creating cart table:', err);
-        else console.log('Cart table ready');
+    });
+
+    // Create orderDetail table
+    const createOrderDetailTableSql = `
+        CREATE TABLE IF NOT EXISTS orderDetail (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            order_id VARCHAR(255) NOT NULL,
+            buyer_id INT NOT NULL,
+            buyer_name VARCHAR(255),
+            seller_id INT NOT NULL,
+            seller_name VARCHAR(255),
+            product_id INT NOT NULL,
+            product_name VARCHAR(255),
+            price DECIMAL(10, 2) NOT NULL,
+            quantity INT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `;
+    db.query(createOrderDetailTableSql, (err) => {
+        if (err) console.error('Error creating orderDetail table:', err);
+        else console.log('OrderDetail table ready');
     });
 };
 
@@ -398,6 +418,76 @@ app.delete('/api/cart/:cartId', (req, res) => {
             return res.status(500).json({ message: 'Error removing from cart' });
         }
         res.json({ message: 'Item removed from cart' });
+    });
+});
+
+// ============ CHECKOUT API ============
+
+app.post('/api/checkout', (req, res) => {
+    const { userId, buyerName } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // 1. Get cart items for this user
+    const getCartSql = `
+        SELECT c.*, p.name as product_name, p.price, p.user_id as seller_id, u.username as seller_name
+        FROM cart c
+        JOIN products p ON c.product_id = p.id
+        JOIN users u ON p.user_id = u.id
+        WHERE c.user_id = ?
+    `;
+
+    db.query(getCartSql, [userId], (err, cartItems) => {
+        if (err) {
+            console.error('Error fetching cart for checkout:', err);
+            return res.status(500).json({ message: 'Database error fetching cart' });
+        }
+
+        if (cartItems.length === 0) {
+            return res.status(400).json({ message: 'Cart is empty' });
+        }
+
+        // 2. Create Order ID (simple timestamp + random component for uniqueness)
+        const orderId = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+        // 3. Insert into orderDetail
+        const insertOrderSql = `
+            INSERT INTO orderDetail (order_id, buyer_id, buyer_name, seller_id, seller_name, product_id, product_name, price, quantity)
+            VALUES ?
+        `;
+
+        const orderValues = cartItems.map(item => [
+            orderId,
+            userId,
+            buyerName || 'Unknown', // In a real app we'd fetch this from DB if not provided, or rely on userId join
+            item.seller_id,
+            item.seller_name,
+            item.product_id,
+            item.product_name,
+            item.price,
+            item.quantity
+        ]);
+
+        db.query(insertOrderSql, [orderValues], (err) => {
+            if (err) {
+                console.error('Error creating order details:', err);
+                return res.status(500).json({ message: 'Error creating order' });
+            }
+
+            // 4. Clear Cart
+            const clearCartSql = 'DELETE FROM cart WHERE user_id = ?';
+            db.query(clearCartSql, [userId], (err) => {
+                if (err) {
+                    console.error('Error clearing cart:', err);
+                    // Note: Order is already created, so this is a partial failure state in a real app (transaction needed)
+                    return res.status(500).json({ message: 'Order created but failed to clear cart' });
+                }
+
+                res.json({ message: 'Purchase successful', orderId: orderId });
+            });
+        });
     });
 });
 
